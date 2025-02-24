@@ -92,6 +92,7 @@ local Configuration = {
     Setting:new{ id = 'modelName',          required = true },
     Setting:new{ id = 'word_field',         required = true },
     Setting:new{ id = 'def_field',          required = true },
+    Setting:new{ id = 'dict_word_field',    required = true },
     Setting:new{ id = 'dupe_scope',         default = 'deck' },
     Setting:new{ id = 'allow_dupes',        default = false },
     Setting:new{ id = 'custom_tags',        default = {} },

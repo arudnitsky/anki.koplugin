@@ -65,6 +65,12 @@ local menu_entries = {
         name = "Word Field",
         description = "Anki field for selected word.",
     },
+    {
+        id = "dict_word_field",
+        group = note_settings,
+        name = "Dictionary Word Field",
+        description = "Anki field for word found in dictionary.",
+    },
      {
         id = "context_field",
         group = note_settings,
