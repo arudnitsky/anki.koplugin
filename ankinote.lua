@@ -33,7 +33,7 @@ end
 
 function AnkiNote:convert_to_HTML(opts)
     -- logger.info("AnkiNote#convert_to_HTML() opts", opts)
-    local wrapper_template = opts.wrapper_template or "<div class=\"%s\"><ol>%s</ol></div>"
+    local wrapper_template = opts.wrapper_template or "<div class=\"%s\">%s</div>"
     local entry_template = opts.entry_template or "<li dict=\"%s\">%s</li>"
     local list_items = {}
     local word_to_return = nil
