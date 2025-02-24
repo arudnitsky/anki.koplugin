@@ -14,6 +14,7 @@ local AnkiNote = {
 -- We want to know if last dict lookup is contained in first dict lookup.
 -- e.g.: '広大な' -> trimmed to '広大' -> context is '' (before), 'な' (after)
 --]]
+-- @@@@AMR I can probably get rid of this. If the context is wrong, I can clean that up on the Anki side.
 function AnkiNote:set_word_trim()
     local list = self.popup_dict.window_list
     if #list == 1 then
@@ -31,13 +32,18 @@ end
 
 
 function AnkiNote:convert_to_HTML(opts)
+    -- logger.info("AnkiNote#convert_to_HTML() opts", opts)
     local wrapper_template = opts.wrapper_template or "<div class=\"%s\"><ol>%s</ol></div>"
     local entry_template = opts.entry_template or "<li dict=\"%s\">%s</li>"
     local list_items = {}
+    local word_to_return = nil
     for _,entry in ipairs(opts.entries) do
-        table.insert(list_items, opts.build(entry, entry_template))
+        local built_entry, dict_word = opts.build(entry, entry_template)
+        word_to_return = dict_word
+        table.insert(list_items, built_entry)
     end
-    return wrapper_template:format(opts.class, table.concat(list_items))
+    -- @@@@AMR this only works because there is one entry
+    return wrapper_template:format(opts.class, table.concat(list_items)), word_to_return
 end
 
 -- [[
@@ -165,17 +171,19 @@ function AnkiNote:get_definition()
             local def = entry.definition
             if entry.is_html then -- try adding dict name to opening div tag (if present)
                 -- gsub wrapped in () so it only gives us the first result, and discards the index (2nd arg.)
-                return (def:gsub("(<div)( ?)", string.format("%%1 dict=\"%s\"%%2", entry.dict), 1))
+                return (def:gsub("(<div)( ?)", string.format("%%1 dict=\"%s\"%%2", entry.dict), 1)), entry.word
             end
-            return entry_template:format(entry.dict, (def:gsub("\n", "<br>")))
+            return entry_template:format(entry.dict, (def:gsub("\n", "<br>"))), entry.word
         end
     }
 end
 
 function AnkiNote:build()
+    local definition, dict_word = self:get_definition()
     local fields = {
         [conf.word_field:get_value()] = self.popup_dict.word,
-        [conf.def_field:get_value()] = self:get_definition()
+        [conf.def_field:get_value()] = definition,
+        [conf.dict_word_field:get_value()] = dict_word,
     }
     local optional_fields = {
         [conf.context_field] = function() return self:get_word_context() end,

@@ -55,9 +55,7 @@ These settings are configured via a user profile, see [Profiles](profiles/README
   #### Next sentence count (`next_sentence_count`)
   Define the amount of sentences which should be appended to the word you looked up. Set this to `1` to have it complete the sentence the word occured in.
   
-  
   The exact context stored can be modified by pressing and holding the 'Add to Anki' button, and choosing the 'custom context' entry on the menu that pops up.
-  
   #### Dictionary definition (`def_field`)
   The dictionary entry that was selected when pressing the button.
   #### Audio (`audio_field`)
