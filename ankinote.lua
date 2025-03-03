@@ -16,18 +16,22 @@ local AnkiNote = {
 --]]
 -- @@@@AMR I can probably get rid of this. If the context is wrong, I can clean that up on the Anki side.
 function AnkiNote:set_word_trim()
-    local list = self.popup_dict.window_list
-    if #list == 1 then
-        return
-    end
-    local orig, last = list[1].word, list[#list].word
-    logger.dbg(("first popup dict: %s, last dict : %s"):format(orig, last))
-    local s_idx, e_idx = orig:find(last, 1, true)
-    if not s_idx then
-        self.contextual_lookup = false
-    else
-        self.word_trim = { before = orig:sub(1, s_idx-1), after = orig:sub(e_idx+1, #orig) }
-    end
+    -- always set to true, so we get the context sentence
+    -- I can clean this up in Anki itself, if the word doesn't fit with the context sentence.
+    self.contextual_lookup = true
+    
+    -- local list = self.popup_dict.window_list
+    -- if #list == 1 then
+    --     return
+    -- end
+    -- local orig, last = list[1].word, list[#list].word
+    -- logger.dbg(("first popup dict: %s, last dict : %s"):format(orig, last))
+    -- local s_idx, e_idx = orig:find(last, 1, true)
+    -- if not s_idx then
+    --     self.contextual_lookup = false
+    -- else
+    --     self.word_trim = { before = orig:sub(1, s_idx-1), after = orig:sub(e_idx+1, #orig) }
+    -- end
 end
 
 
@@ -60,8 +64,10 @@ function AnkiNote:get_word_context()
     end
     local provider = self.ui.document.provider
     if self.ui.document.getSelectedWordContext then
+        local list = self.popup_dict.window_list
+        local original_word = list[1].word
         local before, after = self:get_custom_context(unpack(self.context))
-        return before .. "<b>" .. self.popup_dict.word .. "</b>" .. after
+        return before .. "<b>" .. original_word .. "</b>" .. after
     elseif provider == "mupdf" then -- CBZ
         local ocr_text = self.ui['Mokuro'] and self.ui['Mokuro']:get_selection()
         logger.info("selected text: ", ocr_text)
@@ -180,8 +186,10 @@ end
 
 function AnkiNote:build()
     local definition, dict_word = self:get_definition()
+    local list = self.popup_dict.window_list
+    local original_word = list[1].word
     local fields = {
-        [conf.word_field:get_value()] = self.popup_dict.word,
+        [conf.word_field:get_value()] = original_word,
         [conf.def_field:get_value()] = definition,
         [conf.dict_word_field:get_value()] = dict_word,
     }
