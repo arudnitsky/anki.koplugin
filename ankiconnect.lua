@@ -337,13 +337,13 @@ end
 function AnkiConnect:store_offline(note, reason, show_always)
     local id = note.data.fields[note.identifier]
     if self.local_notes[id] and not note.data.options.allowDuplicate then
-        return self:show_popup("Cannot store duplicate note offline!", 6, true)
+        return self:show_popup("Cannot store duplicate note offline!", 2, true)
     end
     self.local_notes[id] = true
     table.insert(self.local_notes, note)
     u.open_file(self.notes_filename, 'a', function(f) f:write(json.encode(note) .. '\n') end)
     self.latest_synced_note = { state = "offline", id = id }
-    return self:show_popup(string.format("%s\nStored note offline", reason), 3, show_always or false)
+    return self:show_popup(string.format("%s\nStored note offline", reason), 2, show_always or false)
 end
 
 function AnkiConnect:load_notes()
