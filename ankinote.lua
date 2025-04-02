@@ -316,6 +316,9 @@ function AnkiNote:new(popup_dict)
         word_trim = { before = "", after = "" },
         tags = { "KOReader" },
     }
+    for _, tag in ipairs(conf.custom_tags:get_value()) do
+        table.insert(new.tags, tag)
+    end
     local new_mt = {}
     function new_mt.__index(t, v)
         return rawget(t, v) or self[v]
